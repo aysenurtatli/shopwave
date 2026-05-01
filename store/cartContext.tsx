@@ -9,7 +9,7 @@ type CartItem = {
 
 type CartContextType = {
   items: CartItem[];
-  addToCart: (product: ProductExtended) => void;
+  addToCart: (product: ProductExtended, quantity: number) => void;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
   getCartCount: () => number;
