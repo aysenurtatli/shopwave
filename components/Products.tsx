@@ -201,7 +201,7 @@ export default function Products() {
 
         {/* ── Product grid ──────────────────────────────────────────────── */}
         {filtered.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch">
             {filtered.map((product) => (
               <ProductCard
                 key={product.id}

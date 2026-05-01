@@ -49,7 +49,7 @@ export default function ProductCard({
   };
 
   return (
-    <div className="group relative bg-[#141414] border border-[#2a2a2a] rounded-2xl overflow-hidden hover:border-[#3a3a3a] transition-all duration-300">
+    <div className="group relative bg-[#141414] border border-[#2a2a2a] rounded-2xl overflow-hidden hover:border-[#3a3a3a] flex flex-col h-full transition-all duration-300">
       {/* Image area */}
       <Link
         href={`/products/${product.slug}`}
@@ -99,7 +99,7 @@ export default function ProductCard({
       </Link>
 
       {/* Info */}
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-1">
         <p className="text-[11px] font-semibold text-[#888] uppercase tracking-wider mb-1">
           {product.brand}
         </p>
@@ -135,7 +135,7 @@ export default function ProductCard({
         </div>
 
         {/* Price + Add to cart */}
-        <div className="flex items-center justify-between gap-2">
+        <div className="block md:flex items-center justify-between gap-2 mt-auto">
           <div className="flex items-baseline gap-1.5">
             <span className="text-base font-bold text-[#f0f0f0]">
               ${product.price.toFixed(2)}
@@ -149,7 +149,7 @@ export default function ProductCard({
 
           <button
             onClick={handleAddToCart}
-            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all duration-200 ${
+            className={`flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all duration-200 w-full md:w-auto mt-2 md:mt-0 ${
               added
                 ? "bg-[#e8ff5a] text-[#0a0a0a]"
                 : "bg-[#1f1f1f] border border-[#2a2a2a] text-[#f0f0f0] hover:bg-[#e8ff5a] hover:text-[#0a0a0a] hover:border-[#e8ff5a]"
