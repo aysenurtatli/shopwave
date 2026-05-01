@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Syne, DM_Sans } from "next/font/google";
+import { CartProvider } from "@/store/cartContext";
+import Footer from "@/components/Footer";
 
 const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
 
@@ -32,8 +34,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <Navbar />
-        {children}
+        <CartProvider>
+          <Navbar />
+          {children}
+        </CartProvider>
+        <Footer />
       </body>
     </html>
   );

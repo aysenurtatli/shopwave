@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { findProductsByName, ProductExtended } from "@/data/products";
 import { PRODUCTS } from "@/data/products";
+import { useCart } from "@/store/cartContext";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -23,6 +24,8 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const router = useRouter();
+  const { getCartCount } = useCart();
+  const count = getCartCount();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -196,40 +199,41 @@ export default function Navbar() {
         {/* Actions */}
         <div className="flex items-center gap-1.5 shrink-0">
           {/* Cart */}
-          <button
-            onClick={() => setCartCount(cartCount === 3 ? 0 : 3)}
-            className="relative w-10 h-10 flex items-center justify-center rounded-[10px] border border-transparent text-[#888] hover:text-[#f0f0f0] hover:bg-[#1f1f1f] hover:border-[#2a2a2a] transition-colors"
-            aria-label="Cart"
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path
-                d="M1 1h2l2.5 9h8L16 5H5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle
-                cx="7.5"
-                cy="15.5"
-                r="1"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              />
-              <circle
-                cx="13.5"
-                cy="15.5"
-                r="1"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              />
-            </svg>
-            {cartCount > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 bg-[#e8ff5a] text-[#0a0a0a] text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                {cartCount}
-              </span>
-            )}
-          </button>
+          <Link href="/cart">
+            <button
+              className="relative w-10 h-10 flex items-center justify-center rounded-[10px] border border-transparent text-[#888] hover:text-[#f0f0f0] hover:bg-[#1f1f1f] hover:border-[#2a2a2a] transition-colors"
+              aria-label="Cart"
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path
+                  d="M1 1h2l2.5 9h8L16 5H5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle
+                  cx="7.5"
+                  cy="15.5"
+                  r="1"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <circle
+                  cx="13.5"
+                  cy="15.5"
+                  r="1"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+              </svg>
+              {count > 0 && (
+                <span className="absolute top-1 right-1 w-4 h-4 bg-[#e8ff5a] text-[#0a0a0a] text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                  {count}
+                </span>
+              )}
+            </button>
+          </Link>
 
           {/* Hamburger */}
           <button

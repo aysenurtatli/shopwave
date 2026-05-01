@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
+import { useCart } from "@/store/cartContext";
 import {
   getProductBySlug,
   getProductsByCategory,
@@ -159,6 +160,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
   const [added, setAdded] = useState(false);
   const [activeTab, setActiveTab] = useState<"details" | "reviews">("details");
   const [wishlist, setWishlist] = useState<string[]>([]);
+  const { addToCart } = useCart();
 
   const discount = product.originalPrice
     ? Math.round(
@@ -167,6 +169,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
     : null;
 
   const handleAddToCart = () => {
+    addToCart(product, quantity);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };

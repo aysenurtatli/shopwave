@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ProductExtended } from "@/data/products";
+import { useCart } from "@/store/cartContext";
 
 interface ProductCardProps {
   product: ProductExtended;
@@ -20,6 +21,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [wished, setWished] = useState(isWishlisted);
   const [added, setAdded] = useState(false);
+  const { items, addToCart } = useCart();
 
   const discount = product.originalPrice
     ? Math.round(
@@ -28,7 +30,7 @@ export default function ProductCard({
     : null;
 
   const handleAddToCart = () => {
-    onAddToCart?.(product);
+    addToCart(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
   };
@@ -147,7 +149,7 @@ export default function ProductCard({
 
           <button
             onClick={handleAddToCart}
-            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-[8px] transition-all duration-200 ${
+            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all duration-200 ${
               added
                 ? "bg-[#e8ff5a] text-[#0a0a0a]"
                 : "bg-[#1f1f1f] border border-[#2a2a2a] text-[#f0f0f0] hover:bg-[#e8ff5a] hover:text-[#0a0a0a] hover:border-[#e8ff5a]"
