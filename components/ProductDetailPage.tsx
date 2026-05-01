@@ -264,8 +264,30 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
             </div>
 
             {/* Quantity + actions */}
-            <div className="flex items-center gap-3 mb-4">
-              <QuantitySelector value={quantity} onChange={setQuantity} />
+            <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
+              <div className="flex items-center gap-4 w-full md:w-auto">
+                <QuantitySelector value={quantity} onChange={setQuantity} />
+                <button
+                  onClick={() => setWished(!wished)}
+                  className={`w-12 h-12 flex items-center justify-center rounded-xl border transition-colors ${
+                    wished
+                      ? "border-[#e8ff5a]/40 bg-[#161600] text-[#e8ff5a]"
+                      : "border-[#2a2a2a] text-[#555] hover:border-[#444] hover:text-[#f0f0f0]"
+                  }`}
+                  aria-label="Wishlist"
+                >
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path
+                      d="M9 15s-6-4.35-6-8.25A3.75 3.75 0 0 1 9 4.5a3.75 3.75 0 0 1 6 2.25C15 10.65 9 15 9 15z"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinejoin="round"
+                      fill={wished ? "currentColor" : "none"}
+                    />
+                  </svg>
+                </button>
+              </div>
+
               <button
                 onClick={handleAddToCart}
                 disabled={!product.inStock}
@@ -320,25 +342,6 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                       : "Out of stock"}
                   </>
                 )}
-              </button>
-              <button
-                onClick={() => setWished(!wished)}
-                className={`w-12 h-12 flex items-center justify-center rounded-xl border transition-colors ${
-                  wished
-                    ? "border-[#e8ff5a]/40 bg-[#161600] text-[#e8ff5a]"
-                    : "border-[#2a2a2a] text-[#555] hover:border-[#444] hover:text-[#f0f0f0]"
-                }`}
-                aria-label="Wishlist"
-              >
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path
-                    d="M9 15s-6-4.35-6-8.25A3.75 3.75 0 0 1 9 4.5a3.75 3.75 0 0 1 6 2.25C15 10.65 9 15 9 15z"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                    fill={wished ? "currentColor" : "none"}
-                  />
-                </svg>
               </button>
             </div>
 
