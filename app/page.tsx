@@ -5,7 +5,7 @@ import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import type { ProductExtended } from "@/data/products";
 import { getFeaturedProducts } from "@/data/products";
-
+import PlasmaWave from "@/components/PlasmaWave";
 // ─── Mock data ────────────────────────────────────────────────────────────────
 const FEATURED_PRODUCTS = getFeaturedProducts(4);
 
@@ -85,18 +85,34 @@ export default function HomePage() {
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="relative px-6 pt-16 pb-20 overflow-hidden">
         {/* Background grid */}
-        <div
+        {/* <div
           className="pointer-events-none absolute inset-0 opacity-[0.04]"
           style={{
             backgroundImage:
               "linear-gradient(#e8ff5a 1px, transparent 1px), linear-gradient(90deg, #e8ff5a 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }}
-        />
-        {/* Glow blob */}
-        <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[#e8ff5a] opacity-[0.06] blur-[100px]" />
+        /> */}
+        <div className="absolute inset-0 z-5">
+          <PlasmaWave
+            colors={["#e8ff5a", "#eaeaea"]}
+            speed1={0.02}
+            speed2={0.02}
+            focalLength={0.9}
+            bend1={1}
+            bend2={0.5}
+            dir2={1}
+            rotationDeg={0}
+          />
+        </div>
 
-        <div className="relative max-w-4xl mx-auto text-center">
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/90 z-10" />
+
+        {/* Glow blob */}
+        {/* <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[#e8ff5a] opacity-[0.06] blur-[100px]" /> */}
+
+        <div className="relative max-w-4xl mx-auto text-center z-10">
           {/* Eyebrow */}
           <div className="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-full px-4 py-1.5 text-xs font-semibold text-[#888] mb-6 tracking-wider uppercase">
             <span className="w-1.5 h-1.5 rounded-full bg-[#e8ff5a] animate-pulse" />
