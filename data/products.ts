@@ -382,7 +382,9 @@ export function getProductsByCategory(category: Category): ProductExtended[] {
 }
 
 export function getFeaturedProducts(count = 4): ProductExtended[] {
-  return PRODUCTS.filter((p) => p.badge).slice(0, count);
+  return PRODUCTS.filter((p) => p.inStock)
+    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+    .slice(0, count);
 }
 
 export function searchProducts(query: string): ProductExtended[] {

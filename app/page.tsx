@@ -2,60 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import ProductCard, { type Product } from "@/components/ProductCard";
+import ProductCard from "@/components/ProductCard";
+import type { ProductExtended } from "@/data/products";
+import { getFeaturedProducts } from "@/data/products";
 
 // ─── Mock data ────────────────────────────────────────────────────────────────
-const FEATURED_PRODUCTS: Product[] = [
-  {
-    id: "1",
-    name: "Wave Runner Pro Sneakers",
-    brand: "Nike",
-    price: 129,
-    originalPrice: 179,
-    rating: 4,
-    reviewCount: 214,
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80",
-    badge: "Sale",
-    slug: "wave-runner-pro",
-  },
-  {
-    id: "2",
-    name: "SoundDrop Max Headphones",
-    brand: "Sony",
-    price: 89,
-    rating: 5,
-    reviewCount: 98,
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80",
-    badge: "Hot",
-    slug: "sounddrop-max",
-  },
-  {
-    id: "3",
-    name: "Orbit Watch Series 2",
-    brand: "Casio",
-    price: 199,
-    originalPrice: 249,
-    rating: 4,
-    reviewCount: 57,
-    image:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80",
-    badge: "New",
-    slug: "orbit-watch-s2",
-  },
-  {
-    id: "4",
-    name: "Urban Pack 24L Backpack",
-    brand: "Herschel",
-    price: 64,
-    rating: 4,
-    reviewCount: 132,
-    image:
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80",
-    slug: "urban-pack-24l",
-  },
-];
+const FEATURED_PRODUCTS = getFeaturedProducts(4);
 
 const CATEGORIES = [
   {
@@ -116,11 +68,11 @@ export default function HomePage() {
   const [cartItems, setCartItems] = useState<string[]>([]);
   const [wishlisted, setWishlisted] = useState<string[]>([]);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: ProductExtended) => {
     setCartItems((prev) => [...prev, product.id]);
   };
 
-  const handleToggleWishlist = (product: Product) => {
+  const handleToggleWishlist = (product: ProductExtended) => {
     setWishlisted((prev) =>
       prev.includes(product.id)
         ? prev.filter((id) => id !== product.id)
