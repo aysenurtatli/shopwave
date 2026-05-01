@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import ProductCard from "@/components/ProductCard";
 import { PRODUCTS, type ProductExtended } from "@/data/products";
+import ShinyText from "@/components/ShinyText";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface DealSection {
@@ -100,15 +101,29 @@ function PromoBanner() {
       {/* Glow */}
       <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[200px] rounded-full bg-[#e8ff5a] opacity-[0.05] blur-[80px]" />
 
-      <div className="relative">
+      <div className="relative text-center">
         <span className="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-full px-4 py-1.5 text-xs font-semibold text-[#888] mb-4 tracking-wider uppercase">
           <span className="w-1.5 h-1.5 rounded-full bg-[#ff5a5a] animate-pulse" />
           Flash sale ends in
           <Countdown seconds={13320} />
         </span>
-        <h1 className="text-4xl sm:text-6xl font-black tracking-tight font-[family-name:var(--font-syne)] text-[#f0f0f0] mb-3">
-          Today&apos;s best deals.
-        </h1>
+
+        {/* TITLE WRAPPER (ÖNEMLİ) */}
+        <div className="text-4xl sm:text-6xl font-black tracking-tight font-[family-name:var(--font-syne)] text-[#e3e3e3] mb-3">
+          <ShinyText
+            text="Today's best deals."
+            speed={1.5}
+            delay={0}
+            color="#e3e3e3"
+            shineColor="#e8ff5a"
+            spread={160}
+            direction="left"
+            yoyo={true}
+            pauseOnHover={false}
+            disabled={false}
+          />
+        </div>
+
         <p className="text-[#555] text-base max-w-md mx-auto">
           Hand-picked discounts updated daily. Free shipping on orders over $75.
         </p>
