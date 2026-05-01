@@ -30,7 +30,7 @@ export default function ProductCard({
     : null;
 
   const handleAddToCart = () => {
-    addToCart(product);
+    addToCart(product, 1);
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
   };
