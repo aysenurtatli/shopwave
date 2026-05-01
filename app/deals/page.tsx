@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from "react";
 import ProductCard from "@/components/ProductCard";
 import { PRODUCTS, type ProductExtended } from "@/data/products";
-import type { Product } from "@/components/ProductCard";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface DealSection {
@@ -127,8 +126,8 @@ function DealsSection({
 }: {
   section: DealSection;
   wishlist: string[];
-  onToggleWishlist: (p: Product) => void;
-  onAddToCart: (p: Product) => void;
+  onToggleWishlist: (p: ProductExtended) => void;
+  onAddToCart: (p: ProductExtended) => void;
 }) {
   const products = useMemo(() => PRODUCTS.filter(section.filter), [section]);
 

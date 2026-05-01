@@ -1,5 +1,3 @@
-import { type Product } from "@/components/ProductCard";
-
 export type Category =
   | "sneakers"
   | "audio"
@@ -8,7 +6,17 @@ export type Category =
   | "cameras"
   | "tech";
 
-export interface ProductExtended extends Product {
+export interface ProductExtended {
+  id: string;
+  name: string;
+  image: string;
+  brand: string;
+  price: number;
+  originalPrice?: number;
+  rating: number;
+  reviewCount: number;
+  badge?: "New" | "Sale" | "Hot" | "Limited";
+  slug: string;
   category: Category;
   description: string;
   tags: string[];

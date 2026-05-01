@@ -3,24 +3,12 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-export interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  price: number;
-  originalPrice?: number;
-  rating: number;
-  reviewCount: number;
-  image: string;
-  badge?: "New" | "Sale" | "Hot" | "Limited";
-  slug: string;
-}
+import type { ProductExtended } from "@/data/products";
 
 interface ProductCardProps {
-  product: Product;
-  onAddToCart?: (product: Product) => void;
-  onToggleWishlist?: (product: Product) => void;
+  product: ProductExtended;
+  onAddToCart?: (product: ProductExtended) => void;
+  onToggleWishlist?: (product: ProductExtended) => void;
   isWishlisted?: boolean;
 }
 
