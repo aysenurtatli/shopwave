@@ -15,13 +15,12 @@ interface ProductCardProps {
 
 export default function ProductCard({
   product,
-  onAddToCart,
   onToggleWishlist,
   isWishlisted = false,
 }: ProductCardProps) {
   const [wished, setWished] = useState(isWishlisted);
   const [added, setAdded] = useState(false);
-  const { items, addToCart } = useCart();
+  const { addToCart } = useCart();
 
   const discount = product.originalPrice
     ? Math.round(

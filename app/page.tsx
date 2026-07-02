@@ -28,19 +28,19 @@ const DEALS = [
     label: "Flash Sale",
     sublabel: "Ends in 3h 42m",
     accent: "#ff5a5a",
-    href: "/deals/flash",
+    href: "/deals?type=flash",
   },
   {
     label: "Bundle & Save",
     sublabel: "Up to 35% off",
     accent: "#e8ff5a",
-    href: "/deals/bundles",
+    href: "/deals?type=bundles",
   },
   {
     label: "New Arrivals",
     sublabel: "Just dropped",
     accent: "#5affb8",
-    href: "/new",
+    href: "/deals?type=new",
   },
 ];
 
@@ -65,12 +65,7 @@ function CountdownBadge({ totalSeconds }: { totalSeconds: number }) {
 
 // ─── Main component ────────────────────────────────────────────────────────────
 export default function HomePage() {
-  const [cartItems, setCartItems] = useState<string[]>([]);
   const [wishlisted, setWishlisted] = useState<string[]>([]);
-
-  const handleAddToCart = (product: ProductExtended) => {
-    setCartItems((prev) => [...prev, product.id]);
-  };
 
   const handleToggleWishlist = (product: ProductExtended) => {
     setWishlisted((prev) =>
@@ -84,15 +79,7 @@ export default function HomePage() {
     <main className="bg-[#0a0a0a] min-h-screen text-[#f0f0f0]">
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="relative px-6 pt-16 pb-20 overflow-hidden">
-        {/* Background grid */}
-        {/* <div
-          className="pointer-events-none absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#e8ff5a 1px, transparent 1px), linear-gradient(90deg, #e8ff5a 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        /> */}
+
         <div className="absolute inset-0 z-5">
           <PlasmaWave
             colors={["#e8ff5a", "#eaeaea"]}
@@ -300,7 +287,6 @@ export default function HomePage() {
               <ProductCard
                 key={product.id}
                 product={product}
-                onAddToCart={handleAddToCart}
                 onToggleWishlist={handleToggleWishlist}
                 isWishlisted={wishlisted.includes(product.id)}
               />

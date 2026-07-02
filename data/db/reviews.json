@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "product_id": "16",
+    "user_id": 1,
+    "userName": "Ayşenur T.",
+    "rating": 5,
+    "comment": "I like it",
+    "createdAt": "2026-07-02T19:12:59.647Z"
+  }
+]

@@ -132,6 +132,7 @@ export default function PlasmaWave(props: PlasmaWaveProps) {
   } = props;
 
   const propsRef = useRef<PlasmaWaveProps>(props);
+  // eslint-disable-next-line react-hooks/refs
   propsRef.current = props;
 
   const containerRef = useRef<HTMLDivElement>(null);

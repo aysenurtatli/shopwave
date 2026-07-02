@@ -1,11 +1,13 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { findProductsByName, ProductExtended } from "@/data/products";
 import { PRODUCTS } from "@/data/products";
 import { useCart } from "@/store/cartContext";
+import { logoutAction } from "@/app/actions/auth";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -16,16 +18,41 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(3);
-  const [wished, setWished] = useState(false);
   const [activeLink, setActiveLink] = useState("Home");
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<ProductExtended[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const router = useRouter();
+  const pathname = usePathname();
   const { getCartCount } = useCart();
   const count = getCartCount();
+
+  const [user, setUser] = useState<{ firstName: string; lastName: string; email: string } | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated) {
+          setUser(data.user);
+        } else {
+          setUser(null);
+        }
+      })
+      .catch((err) => console.error("Error loading user info in Navbar:", err))
+      .finally(() => setAuthLoading(false));
+  }, [pathname]);
+
+  const handleLogout = () => {
+    startTransition(async () => {
+      await logoutAction();
+      setUser(null);
+      router.push("/login");
+      router.refresh();
+    });
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,10 +62,10 @@ export default function Navbar() {
     const results = findProductsByName(search);
 
     if (results.length === 1) {
-      // tek ürün → direkt detaya git
+
       router.push(`/products/${results[0].slug}`);
     } else {
-      // 0 veya birden fazla → liste sayfası
+
       router.push(`/products?search=${search}`);
     }
     setShowDropdown(false);
@@ -91,9 +118,9 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50">
-      {/* Main navbar */}
+
       <nav className="bg-[#141414] border-b border-[#2a2a2a] px-6 h-16 flex items-center justify-between gap-4">
-        {/* Logo */}
+
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <div className="w-7 h-7 bg-[#e8ff5a] rounded-lg flex items-center justify-center">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -111,7 +138,6 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-1 shrink-0">
           {NAV_LINKS.map((link) => (
             <Link
@@ -129,7 +155,6 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Search bar */}
         <form
           onSubmit={handleSearch}
           className="hidden sm:flex flex-1 max-w-sm relative"
@@ -196,9 +221,8 @@ export default function Navbar() {
           )}
         </form>
 
-        {/* Actions */}
         <div className="flex items-center gap-1.5 shrink-0">
-          {/* Cart */}
+
           <Link href="/cart">
             <button
               className="relative w-10 h-10 flex items-center justify-center rounded-[10px] border border-transparent text-[#888] hover:text-[#f0f0f0] hover:bg-[#1f1f1f] hover:border-[#2a2a2a] transition-colors"
@@ -235,7 +259,39 @@ export default function Navbar() {
             </button>
           </Link>
 
-          {/* Hamburger */}
+          {!authLoading && (
+            <>
+              {user ? (
+                <div className="hidden md:flex items-center gap-1.5">
+                  <Link href="/profile">
+                    <button className="text-xs font-semibold text-[#888] hover:text-[#f0f0f0] hover:bg-[#1f1f1f] px-3 py-2 rounded-[10px] border border-transparent transition-colors">
+                      Hi, {user.firstName}
+                    </button>
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-[#1f1f1f] px-3 py-2 rounded-[10px] transition-colors cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="hidden md:flex items-center gap-1.5">
+                  <Link href="/login">
+                    <button className="text-xs font-semibold text-[#888] hover:text-[#f0f0f0] hover:bg-[#1f1f1f] px-3 py-2 rounded-[10px] border border-transparent transition-colors">
+                      Login
+                    </button>
+                  </Link>
+                  <Link href="/register">
+                    <button className="text-xs font-bold bg-[#e8ff5a] text-[#0a0a0a] hover:bg-[#d4eb45] px-3 py-2 rounded-[10px] transition-colors">
+                      Sign Up
+                    </button>
+                  </Link>
+                </div>
+              )}
+            </>
+          )}
+
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="md:hidden w-9 h-9 flex items-center justify-center text-[#888] hover:text-[#f0f0f0] transition-colors"
@@ -264,10 +320,9 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden bg-[#141414] border-b border-[#2a2a2a] px-6 py-4 flex flex-col gap-1">
-          {/* Mobile search */}
+
           <form onSubmit={handleSearch} className="relative mb-2">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
@@ -295,7 +350,6 @@ export default function Navbar() {
             />
           </form>
 
-          {/* Mobile nav links */}
           {NAV_LINKS.map((link) => (
             <Link
               key={link.label}
@@ -313,6 +367,55 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+
+          {!authLoading && (
+            <div className="mt-4 pt-4 border-t border-[#2a2a2a] flex flex-col gap-2">
+              {user ? (
+                <>
+                  <Link
+                    href="/profile"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-[15px] font-medium px-3 py-2.5 rounded-[10px] text-[#888] hover:text-[#f0f0f0] hover:bg-[#1f1f1f] transition-colors"
+                  >
+                    My Profile
+                  </Link>
+                  <Link
+                    href="/orders"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-[15px] font-medium px-3 py-2.5 rounded-[10px] text-[#888] hover:text-[#f0f0f0] hover:bg-[#1f1f1f] transition-colors"
+                  >
+                    My Orders
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setMobileOpen(false);
+                      handleLogout();
+                    }}
+                    className="text-[15px] font-medium text-left px-3 py-2.5 rounded-[10px] text-red-400 hover:text-red-300 hover:bg-[#1f1f1f] transition-colors cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-[15px] font-medium px-3 py-2.5 rounded-[10px] text-[#888] hover:text-[#f0f0f0] hover:bg-[#1f1f1f] transition-colors"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-[15px] font-bold text-center px-3 py-2.5 rounded-[10px] bg-[#e8ff5a] text-[#0a0a0a] hover:bg-[#d4eb45] transition-colors"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
         </div>
       )}
     </header>

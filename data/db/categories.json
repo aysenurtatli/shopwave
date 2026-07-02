@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sneakers",
+    "name": "Sneakers",
+    "slug": "sneakers"
+  },
+  {
+    "id": "audio",
+    "name": "Audio",
+    "slug": "audio"
+  },
+  {
+    "id": "watches",
+    "name": "Watches",
+    "slug": "watches"
+  },
+  {
+    "id": "bags",
+    "name": "Bags",
+    "slug": "bags"
+  },
+  {
+    "id": "cameras",
+    "name": "Cameras",
+    "slug": "cameras"
+  },
+  {
+    "id": "tech",
+    "name": "Tech",
+    "slug": "tech"
+  }
+]

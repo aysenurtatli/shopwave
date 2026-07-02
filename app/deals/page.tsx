@@ -1,11 +1,12 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import { PRODUCTS, type ProductExtended } from "@/data/products";
 import ShinyText from "@/components/ShinyText";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 interface DealSection {
   id: string;
   label: string;
@@ -14,7 +15,6 @@ interface DealSection {
   filter: (p: ProductExtended) => boolean;
 }
 
-// ─── Deal sections config ─────────────────────────────────────────────────────
 const DEAL_SECTIONS: DealSection[] = [
   {
     id: "flash",
@@ -22,6 +22,13 @@ const DEAL_SECTIONS: DealSection[] = [
     sublabel: "Limited time — prices drop fast",
     accent: "#ff5a5a",
     filter: (p) => !!p.originalPrice,
+  },
+  {
+    id: "bundles",
+    label: "🎁 Bundle & Save",
+    sublabel: "Special value packages and discounts",
+    accent: "#5affb8",
+    filter: (p) => p.badge === "Sale" || p.price > 120,
   },
   {
     id: "new",
@@ -46,7 +53,6 @@ const DEAL_SECTIONS: DealSection[] = [
   },
 ];
 
-// ─── Countdown timer hook ─────────────────────────────────────────────────────
 function useCountdown(initialSeconds: number) {
   const [seconds, setSeconds] = useState(initialSeconds);
 
@@ -63,7 +69,6 @@ function useCountdown(initialSeconds: number) {
   return { h, m, s, expired: seconds === 0 };
 }
 
-// ─── Countdown display ────────────────────────────────────────────────────────
 function Countdown({ seconds }: { seconds: number }) {
   const { h, m, s, expired } = useCountdown(seconds);
 
@@ -85,11 +90,9 @@ function Countdown({ seconds }: { seconds: number }) {
   );
 }
 
-// ─── Promo banner ─────────────────────────────────────────────────────────────
 function PromoBanner() {
   return (
     <div className="relative overflow-hidden rounded-2xl bg-[#141414] border border-[#2a2a2a] px-8 py-10 mb-12 text-center">
-      {/* Grid texture */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.03]"
         style={{
@@ -98,85 +101,57 @@ function PromoBanner() {
           backgroundSize: "32px 32px",
         }}
       />
-      {/* Glow */}
-      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[200px] rounded-full bg-[#e8ff5a] opacity-[0.05] blur-[80px]" />
 
-      <div className="relative text-center">
-        <span className="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-full px-4 py-1.5 text-xs font-semibold text-[#888] mb-4 tracking-wider uppercase">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#ff5a5a] animate-pulse" />
-          Flash sale ends in
-          <Countdown seconds={13320} />
+      <div className="relative z-10 flex flex-col items-center">
+        <span className="text-[10px] font-black uppercase tracking-widest text-[#e8ff5a] bg-[#e8ff5a]/10 px-3 py-1 rounded-full border border-[#e8ff5a]/20 mb-4">
+          Limited Wave Offers
         </span>
 
-        {/* TITLE WRAPPER (ÖNEMLİ) */}
-        <div className="text-4xl sm:text-6xl font-black tracking-tight font-[family-name:var(--font-syne)] text-[#e3e3e3] mb-3">
-          <ShinyText
-            text="Today's best deals."
-            speed={1.5}
-            delay={0}
-            color="#e3e3e3"
-            shineColor="#e8ff5a"
-            spread={160}
-            direction="left"
-            yoyo={true}
-            pauseOnHover={false}
-            disabled={false}
-          />
-        </div>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-none font-[family-name:var(--font-syne)] text-[#f0f0f0] max-w-lg mb-4">
+          <ShinyText text="Unbeatable values, limited quantities." speed={4} />
+        </h1>
 
-        <p className="text-[#555] text-base max-w-md mx-auto">
-          Hand-picked discounts updated daily. Free shipping on orders over $75.
+        <p className="text-xs text-[#555] max-w-sm mb-6">
+          Fresh drops, bundle savings, and flash sales updated hourly. Act fast
+          before they disappear.
         </p>
+
+        <div className="flex flex-col items-center gap-1 bg-[#0a0a0a] border border-[#2a2a2a] rounded-2xl p-4 min-w-[220px]">
+          <span className="text-[9px] font-bold text-[#555] uppercase tracking-wider">
+            Wave Event Ends In
+          </span>
+          <Countdown seconds={3 * 3600 + 42 * 60 + 15} />
+        </div>
       </div>
     </div>
   );
 }
 
-// ─── Deal section ─────────────────────────────────────────────────────────────
 function DealsSection({
   section,
   wishlist,
   onToggleWishlist,
-  onAddToCart,
 }: {
   section: DealSection;
   wishlist: string[];
   onToggleWishlist: (p: ProductExtended) => void;
-  onAddToCart: (p: ProductExtended) => void;
 }) {
   const products = useMemo(() => PRODUCTS.filter(section.filter), [section]);
 
   if (products.length === 0) return null;
 
-  const countdownSeconds: Record<string, number> = {
-    flash: 13320,
-    new: 86400,
-    hot: 43200,
-    limited: 21600,
-  };
-
   return (
-    <section className="mb-14">
-      {/* Section header */}
-      <div
-        className="flex items-center justify-between rounded-2xl px-5 py-4 mb-5 border"
-        style={{
-          background: `${section.accent}0d`,
-          borderColor: `${section.accent}30`,
-        }}
-      >
+    <section className="mb-12">
+      <div className="flex items-center justify-between border-b border-[#1f1f1f] pb-3 mb-6">
         <div>
           <h2 className="text-lg font-black font-[family-name:var(--font-syne)] text-[#f0f0f0]">
             {section.label}
           </h2>
           <p className="text-xs text-[#555] mt-0.5">{section.sublabel}</p>
         </div>
-        <div className="flex items-center gap-3">
-          {section.id === "flash" && (
-            <Countdown seconds={countdownSeconds[section.id]} />
-          )}
+        <div>
           <span
-            className="text-xs font-bold px-3 py-1.5 rounded-full"
+            className="text-[10px] font-bold px-2.5 py-1 rounded-full"
             style={{
               background: `${section.accent}20`,
               color: section.accent,
@@ -187,7 +162,6 @@ function DealsSection({
         </div>
       </div>
 
-      {/* Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {products.map((product) => (
           <ProductCard
@@ -195,7 +169,6 @@ function DealsSection({
             product={product}
             isWishlisted={wishlist.includes(product.id)}
             onToggleWishlist={onToggleWishlist}
-            onAddToCart={onAddToCart}
           />
         ))}
       </div>
@@ -203,11 +176,22 @@ function DealsSection({
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
-export default function DealsPage() {
+function DealsContent() {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [cart, setCart] = useState<string[]>([]);
   const [activeFilter, setActiveFilter] = useState<string>("all");
+
+  const searchParams = useSearchParams();
+  const typeParam = searchParams.get("type");
+
+  useEffect(() => {
+    if (
+      typeParam &&
+      ["flash", "bundles", "new", "hot", "limited"].includes(typeParam)
+    ) {
+      setActiveFilter(typeParam);
+    }
+  }, [typeParam]);
 
   const handleToggleWishlist = (product: ProductExtended) => {
     setWishlist((prev) =>
@@ -217,21 +201,17 @@ export default function DealsPage() {
     );
   };
 
-  const handleAddToCart = (product: ProductExtended) => {
-    setCart((prev) => [...prev, product.id]);
-  };
-
-  const visibleSections =
-    activeFilter === "all"
+  const visibleSections = useMemo(() => {
+    return activeFilter === "all"
       ? DEAL_SECTIONS
       : DEAL_SECTIONS.filter((s) => s.id === activeFilter);
+  }, [activeFilter]);
 
   return (
     <main className="bg-[#0a0a0a] min-h-screen text-[#f0f0f0]">
       <div className="max-w-6xl mx-auto px-6 py-10">
         <PromoBanner />
 
-        {/* Filter tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 mb-8 scrollbar-none">
           <button
             onClick={() => setActiveFilter("all")}
@@ -258,18 +238,15 @@ export default function DealsPage() {
           ))}
         </div>
 
-        {/* Deal sections */}
         {visibleSections.map((section) => (
           <DealsSection
             key={section.id}
             section={section}
             wishlist={wishlist}
             onToggleWishlist={handleToggleWishlist}
-            onAddToCart={handleAddToCart}
           />
         ))}
 
-        {/* Cart toast */}
         {cart.length > 0 && (
           <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
             <div className="flex items-center gap-3 bg-[#f0f0f0] text-[#0a0a0a] text-sm font-semibold px-5 py-3 rounded-2xl shadow-xl">
@@ -315,5 +292,19 @@ export default function DealsPage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function DealsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="bg-[#0a0a0a] min-h-[calc(100vh-64px)] w-full flex items-center justify-center text-xs text-[#555]">
+          Loading Deals...
+        </div>
+      }
+    >
+      <DealsContent />
+    </Suspense>
   );
 }

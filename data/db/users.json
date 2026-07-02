@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "firstName": "Ayşenur",
+    "lastName": "Tatlı",
+    "email": "aysenurtatli00@gmail.com",
+    "passwordHash": "7e9ffdcec6e1acd12cb7b4cb205fd8ee:c26ca05833901674796019f43a7d45f8d89a0bbcd1054367397ec43a8f58ca0d1367ff81beaf6be0116cb31e3c8c54c96da1c6c121c4b0e3a733113960b7a20c",
+    "createdAt": "2026-07-02T19:10:06.925Z"
+  }
+]

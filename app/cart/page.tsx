@@ -5,7 +5,7 @@ import { useCart } from "@/store/cartContext";
 import Link from "next/link";
 
 export default function Cart() {
-  const { items, removeFromCart, clearCart } = useCart();
+  const { items, updateQuantity, removeEntireItem, clearCart } = useCart();
 
   const total = items.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
@@ -61,17 +61,33 @@ export default function Cart() {
 
                   {/* Right */}
                   <div className="flex items-center gap-6">
-                    <span className="text-sm font-semibold text-[#888]">
-                      x{item.quantity}
-                    </span>
+                    {/* Quantity Adjusters */}
+                    <div className="flex items-center border border-[#2a2a2a] rounded-lg overflow-hidden">
+                      <button
+                        onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                        className="w-7 h-7 flex items-center justify-center text-[#888] hover:text-[#f0f0f0] hover:bg-[#1f1f1f] transition-colors"
+                      >
+                        -
+                      </button>
+                      <span className="w-8 h-7 flex items-center justify-center text-xs font-bold text-[#f0f0f0] border-x border-[#2a2a2a]">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                        className="w-7 h-7 flex items-center justify-center text-[#888] hover:text-[#f0f0f0] hover:bg-[#1f1f1f] transition-colors"
+                      >
+                        +
+                      </button>
+                    </div>
 
-                    <span className="text-sm font-bold text-[#f0f0f0]">
+                    <span className="text-sm font-bold text-[#f0f0f0] min-w-[60px] text-right">
                       ${(item.product.price * item.quantity).toFixed(2)}
                     </span>
 
                     <button
-                      onClick={() => removeFromCart(item.product.id)}
-                      className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#2a2a2a] text-[#555] hover:text-red-400 hover:border-red-400 transition-colors"
+                      onClick={() => removeEntireItem(item.product.id)}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#2a2a2a] text-[#555] hover:text-red-400 hover:border-red-400 transition-colors cursor-pointer"
+                      aria-label="Remove item"
                     >
                       ✕
                     </button>

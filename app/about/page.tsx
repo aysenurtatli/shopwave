@@ -39,7 +39,7 @@ const STATS = [
   { value: "50K+", label: "Happy customers" },
   { value: "18+", label: "Countries shipped to" },
   { value: "4.9★", label: "Average rating" },
-  { value: "2019", label: "Founded" },
+  { value: "2026", label: "Founded" },
 ];
 
 const VALUES = [
@@ -114,7 +114,7 @@ export default function AboutPage() {
           </h1>
           <p className="text-[#888] text-lg leading-relaxed max-w-xl mx-auto">
             ShopWave started with a simple idea: shopping online should feel
-            exciting, not exhausting. We're a small team obsessed with great
+            exciting, not exhausting. We&apos;re a small team obsessed with great
             products and even better experiences.
           </p>
         </div>
@@ -150,12 +150,12 @@ export default function AboutPage() {
             </h2>
             <p className="text-[#888] text-sm leading-relaxed mb-4">
               We scour the globe for gear worth buying — things that last, that
-              look good, and that don't cost the earth. Every product in our
+              look good, and that don&apos;t cost the earth. Every product in our
               catalogue has been reviewed by a real person on our team.
             </p>
             <p className="text-[#888] text-sm leading-relaxed mb-8">
               We believe shopping should feel like discovering something new,
-              not scrolling through an endless feed of mediocrity. That's why we
+              not scrolling through an endless feed of mediocrity. That&apos;s why we
               keep our catalogue tight and our standards high.
             </p>
             <Link

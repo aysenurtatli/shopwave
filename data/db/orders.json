@@ -1,0 +1,14 @@
+[
+  {
+    "id": 10001,
+    "user_id": 1,
+    "shippingName": "Ayşenur",
+    "shippingAddress": "Istanbul, Türkiye",
+    "shippingPhone": "(530) 621 55 48",
+    "shippingCity": "bolu",
+    "shippingZip": "5555",
+    "totalAmount": 445,
+    "status": "Pending",
+    "createdAt": "2026-07-02T19:15:01.886Z"
+  }
+]

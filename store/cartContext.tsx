@@ -1,16 +1,19 @@
 "use client";
-import { createContext, useContext, useState } from "react";
-import type { ProductExtended } from "@/data/products";
+/* eslint-disable react-hooks/set-state-in-effect */
+import { createContext, useContext, useState, useEffect } from "react";
+import type { Product } from "@/types";
 
 type CartItem = {
-  product: ProductExtended;
+  product: Product;
   quantity: number;
 };
 
 type CartContextType = {
   items: CartItem[];
-  addToCart: (product: ProductExtended, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
+  addToCart: (product: Product, quantity?: number) => void;
+  removeFromCart: (productId: string) => void; // Decrements quantity
+  removeEntireItem: (productId: string) => void; // Removes item completely
+  updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   getCartCount: () => number;
 };
@@ -19,15 +22,34 @@ const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  const addToCart = (product: ProductExtended, quantity = 1) => {
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("sw_cart");
+      if (stored) {
+        setItems(JSON.parse(stored));
+      }
+    } catch (e) {
+      console.error("Failed to parse cart from localStorage:", e);
+    }
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem("sw_cart", JSON.stringify(items));
+    }
+  }, [items, isHydrated]);
+
+  const addToCart = (product: Product, quantity = 1) => {
     setItems((prev) => {
       const existing = prev.find((item) => item.product.id === product.id);
       if (existing) {
         return prev.map((item) =>
           item.product.id === product.id
             ? { ...item, quantity: item.quantity + quantity }
-            : item,
+            : item
         );
       }
       return [...prev, { product, quantity }];
@@ -40,14 +62,35 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         .map((item) =>
           item.product.id === productId
             ? { ...item, quantity: item.quantity - 1 }
-            : item,
+            : item
         )
-        .filter((item) => item.quantity > 0),
+        .filter((item) => item.quantity > 0)
+    );
+  };
+
+  const removeEntireItem = (productId: string) => {
+    setItems((prev) => prev.filter((item) => item.product.id !== productId));
+  };
+
+  const updateQuantity = (productId: string, quantity: number) => {
+    if (quantity <= 0) {
+      removeEntireItem(productId);
+      return;
+    }
+    setItems((prev) =>
+      prev.map((item) =>
+        item.product.id === productId ? { ...item, quantity } : item
+      )
     );
   };
 
   const clearCart = () => {
     setItems([]);
+    try {
+      localStorage.removeItem("sw_cart");
+    } catch (e) {
+      console.error("Failed to remove cart from localStorage:", e);
+    }
   };
 
   const getCartCount = () =>
@@ -55,7 +98,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ items, addToCart, removeFromCart, clearCart, getCartCount }}
+      value={{
+        items,
+        addToCart,
+        removeFromCart,
+        removeEntireItem,
+        updateQuantity,
+        clearCart,
+        getCartCount,
+      }}
     >
       {children}
     </CartContext.Provider>
