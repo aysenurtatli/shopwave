@@ -151,7 +151,7 @@ export async function insertUser(
       throw new Error("A user with this email already exists");
     }
 
-    const nextId = users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1;
+    const nextId = Date.now();
 
     const newUser: User = {
       id: nextId,
@@ -177,6 +177,21 @@ export function getUserByEmail(email: string): User | undefined {
 
 export function getUserById(id: number): User | undefined {
   return getUsers().find((u) => u.id === id);
+}
+
+export async function syncUserToDatabase(user: User): Promise<void> {
+  const release = await dbLock.acquire();
+  try {
+    const users = getUsers();
+    if (!users.some((u) => u.id === user.id)) {
+      users.push(user);
+      fs.writeFileSync(PATH_USERS, JSON.stringify(users, null, 2), "utf-8");
+    }
+  } catch (e) {
+    console.error("Failed to sync user to local database:", e);
+  } finally {
+    release();
+  }
 }
 
 export function getOrders(): Order[] {

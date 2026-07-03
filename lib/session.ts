@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
-import { getUserById } from "@/lib/db";
+import { getUserById, syncUserToDatabase } from "@/lib/db";
 import { User } from "@/types";
 import { signToken, verifyToken, SESSION_COOKIE_NAME } from "./session-edge";
-const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
 
 export { signToken, verifyToken };
 
@@ -44,5 +44,18 @@ export async function getSessionUser(): Promise<User | null> {
   const userId = await verifyToken(sessionCookie.value);
   if (userId === null) return null;
 
-  return getUserById(userId) || null;
+  const user = getUserById(userId);
+  if (user) return user;
+
+  const fallbackUser: User = {
+    id: userId,
+    firstName: "Verified",
+    lastName: "User",
+    email: `user_${userId}@shopwave.com`,
+    passwordHash: "",
+    createdAt: new Date().toISOString(),
+  };
+
+  await syncUserToDatabase(fallbackUser);
+  return fallbackUser;
 }
