@@ -27,7 +27,11 @@ class AsyncLock {
 
 const dbLock = new AsyncLock();
 
-const DB_DIR = path.join(process.cwd(), "data", "db");
+const BUNDLE_DB_DIR = path.join(process.cwd(), "data", "db");
+const DB_DIR = (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY)
+  ? path.join("/tmp", "shopwave_db")
+  : BUNDLE_DB_DIR;
+
 const PATH_CATEGORIES = path.join(DB_DIR, "categories.json");
 const PATH_PRODUCTS = path.join(DB_DIR, "products.json");
 const PATH_USERS = path.join(DB_DIR, "users.json");
@@ -40,17 +44,32 @@ export function ensureDbInitialized() {
     fs.mkdirSync(DB_DIR, { recursive: true });
   }
 
-  if (!fs.existsSync(PATH_CATEGORIES)) {
-    const categoriesSeed = Object.entries(CATEGORY_LABELS).map(([id, label]) => ({
+  const initFile = (filePath: string, fileName: string, seedGenerator: () => unknown) => {
+    if (fs.existsSync(filePath)) {
+      return;
+    }
+    const bundlePath = path.join(BUNDLE_DB_DIR, fileName);
+    if (fs.existsSync(bundlePath)) {
+      try {
+        fs.copyFileSync(bundlePath, filePath);
+        return;
+      } catch (e) {
+        console.error("Failed to copy bundled db file:", fileName, e);
+      }
+    }
+    fs.writeFileSync(filePath, JSON.stringify(seedGenerator(), null, 2), "utf-8");
+  };
+
+  initFile(PATH_CATEGORIES, "categories.json", () => {
+    return Object.entries(CATEGORY_LABELS).map(([id, label]) => ({
       id,
       name: label,
       slug: id,
     }));
-    fs.writeFileSync(PATH_CATEGORIES, JSON.stringify(categoriesSeed, null, 2));
-  }
+  });
 
-  if (!fs.existsSync(PATH_PRODUCTS)) {
-    const productsSeed: Product[] = PRODUCTS.map((p) => ({
+  initFile(PATH_PRODUCTS, "products.json", () => {
+    return PRODUCTS.map((p) => ({
       id: p.id,
       name: p.name,
       image: p.image,
@@ -67,24 +86,12 @@ export function ensureDbInitialized() {
       inStock: p.inStock,
       stockCount: p.stockCount ?? 15,
     }));
-    fs.writeFileSync(PATH_PRODUCTS, JSON.stringify(productsSeed, null, 2));
-  }
+  });
 
-  if (!fs.existsSync(PATH_USERS)) {
-    fs.writeFileSync(PATH_USERS, JSON.stringify([], null, 2));
-  }
-
-  if (!fs.existsSync(PATH_ORDERS)) {
-    fs.writeFileSync(PATH_ORDERS, JSON.stringify([], null, 2));
-  }
-
-  if (!fs.existsSync(PATH_ORDER_ITEMS)) {
-    fs.writeFileSync(PATH_ORDER_ITEMS, JSON.stringify([], null, 2));
-  }
-
-  if (!fs.existsSync(PATH_REVIEWS)) {
-    fs.writeFileSync(PATH_REVIEWS, JSON.stringify([], null, 2));
-  }
+  initFile(PATH_USERS, "users.json", () => []);
+  initFile(PATH_ORDERS, "orders.json", () => []);
+  initFile(PATH_ORDER_ITEMS, "order_items.json", () => []);
+  initFile(PATH_REVIEWS, "reviews.json", () => []);
 }
 
 function readTable<T>(filePath: string): T[] {
