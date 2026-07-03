@@ -25,7 +25,7 @@ export default function Navbar() {
   const [activeIndex, setActiveIndex] = useState(-1);
   const router = useRouter();
   const pathname = usePathname();
-  const { getCartCount } = useCart();
+  const { getCartCount, clearCart } = useCart();
   const count = getCartCount();
 
   const [user, setUser] = useState<{ firstName: string; lastName: string; email: string } | null>(null);
@@ -49,6 +49,7 @@ export default function Navbar() {
     startTransition(async () => {
       await logoutAction();
       setUser(null);
+      clearCart();
       router.push("/login");
       router.refresh();
     });
