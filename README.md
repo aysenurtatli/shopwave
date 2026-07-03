@@ -4,48 +4,56 @@
 
 ---
 
-## 🚀 Key Features
+## 🌐 Canlı Demo / Live Demo
 
-1. **User Authentication & Session Management**:
-   - **Registration**: Allows users to sign up with their first name, last name, email, and password (minimum 6 characters, passwords are hashed using SHA-512 PBKDF2).
-   - **Login**: Secure login verifying passwords against stored PBKDF2 hashes.
-   - **Stateless Sessions**: Managed using cryptographically signed HTTP-only cookies (`sw_session` of the form `userId:expiresAt:HMAC-Hex`) powered by the Web Crypto API.
-   - **Route Protection Middleware**: A centralized middleware protects private pages (`/cart`, `/checkout`, `/orders`, `/profile`) and automatically redirects unauthenticated users to `/login?redirect=[target]`.
+- **Demo URL**: [https://shopwave-iota.vercel.app/](https://shopwave-iota.vercel.app/)
 
-2. **Product Catalog & Advanced Filters**:
-   - **Home Page**: Displays featured products and allows fast category navigation.
-   - **Grid List View**: Responsive catalog featuring brand tags, ratings, stock indicators, and price comparison.
-   - **Search & Filters**: Real-time product search by name, filtering by categories, stock status, sale availability, and sorting (by newest, rating, price low-to-high, price high-to-low).
-   - **Dynamic Product Pages**: Consolidates slug and numeric ID routing (`/products/[id]`) to resolve items dynamically on the server.
-
-3. **Persistent Shopping Cart**:
-   - Managed globally using the **React Context API** with full state synchronization to the browser's `localStorage` (via the `"sw_cart"` key).
-   - Built-in hydration protection ensures zero server-client hydration mismatch errors during Next.js static rendering.
-   - Core operations include adding products, incrementing/decrementing quantities directly in the cart drawer, and deleting items completely.
-
-4. **Secure Checkout & Mock Payments**:
-   - **Shipping details form**: Collects name, phone, address, city, and zip code.
-   - **Mock Payment Form**: Collects card numbers, expiry dates, and CVVs with auto-formatting input helpers.
-   - **Database Integration**: Server Action commits order items and shipping details, decrements stock levels, captures the historical price, and clears the client's `localStorage`.
-
-5. **Order History & Details**:
-   - `/orders`: Lists past orders with dates, total amounts, and statuses (Pending, Processing, Delivered, etc.).
-   - `/orders/[id]`: Detailed invoice display showing delivery information, ordered products, and the **historical unit price** captured at the exact moment of checkout.
-
-6. **Product Reviews (Bonus Feature)**:
-   - Dynamic reviews list showing customer ratings, names, dates, and comments.
-   - Review submission form (available to logged-in users only) that updates the product's overall rating and review counts.
+### 🔑 Demo Hesap Bilgileri / Demo Account Details
+* **Registration**: Registering a new account is fully functional and automatically creates a secure session.
+* **Test Account**:
+  * **Email**: `customer@shopwave.com`
+  * **Password**: `password123`
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Kullanılan Teknolojiler / Technologies Used
 
-- **Core Framework**: Next.js 16 (App Router) & React 19
-- **Type Safety**: TypeScript 5+ (Strict mode compliant)
-- **Styling**: Tailwind CSS & Vanilla CSS (with CSS variable tokens)
-- **Icons**: Lucide React
-- **Animations**: OGL & Tw-Animate-CSS
-- **Database Engine**: Concurrency-locked file-based JSON database (located in `data/db/`)
+* **Framework**: Next.js 16 (App Router) & React 19
+* **Language**: TypeScript 5 (Strict Type Checking)
+* **Styling**: Tailwind CSS & Vanilla CSS (with CSS variables)
+* **Icons**: Lucide React
+* **Animations**: OGL & Tw-Animate-CSS
+* **Database Engine**: Concurrency-locked file-based JSON database (located in `data/db/` or `/tmp/shopwave_db/` when deployed on serverless platforms)
+
+---
+
+## ⚙️ Kurulum Adımları / Setup & Installation
+
+### 1. Projeyi Klonlayın ve Klasöre Geçin / Clone the Project
+```bash
+cd shopwave
+```
+
+### 2. Bağımlılıkları Yükleyin / Install Dependencies
+```bash
+npm install
+```
+
+### 3. Geliştirme Sunucusunu Çalıştırın / Run Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) with your browser.
+
+### 4. Üretim Derlemesini Çalıştırın / Production Build Validation
+```bash
+npm run build
+```
+
+### 5. ESLint ve Tip Kontrollerini Çalıştırın / ESLint & Type Checks
+```bash
+npm run lint
+```
 
 ---
 
@@ -59,28 +67,3 @@ ShopWave implements a relational data structure written directly to JSON files i
 - **`products` (1 ── N) `order_items`**: A product can appear across multiple order details.
 - **`order_items`**: Stored separately with a dedicated `unit_price` field, freezing the purchase price against future catalog adjustments.
 - **`reviews`**: Stored in a dedicated table referencing both `product_id` and `user_id` foreign keys.
-
----
-
-## ⚙️ Setup & Execution
-
-### 1. Install Dependencies
-```bash
-npm install
-```
-
-### 2. Run Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) with your browser.
-
-### 3. Production Build Validation
-```bash
-npm run build
-```
-
-### 4. Code Formatting & Lint Checks
-```bash
-npm run lint
-```
