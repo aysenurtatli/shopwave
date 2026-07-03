@@ -1,69 +1,82 @@
-# ShopWave — E-Commerce Web Application
+# 🌊 ShopWave — Premium E-Commerce Application
 
-**ShopWave** is a premium, fully-functional e-commerce web application built using **Next.js (App Router)**, **TypeScript**, **Tailwind CSS**, and **React**. It features a modern, high-contrast dark-mode interface with subtle neon glow accents and animations.
-
----
-
-## 🌐 Canlı Demo / Live Demo
-
-- **Demo URL**: [https://shopwave-iota.vercel.app/](https://shopwave-iota.vercel.app/)
-
-### 🔑 Demo Hesap Bilgileri / Demo Account Details
-* **Registration**: Registering a new account is fully functional and automatically creates a secure session.
-* **Test Account**:
-  * **Email**: `customer@shopwave.com`
-  * **Password**: `password123`
+ShopWave is a premium, fully-featured e-commerce web application built using **Next.js (App Router)**, **TypeScript**, **Tailwind CSS**, and **React**. It features a modern, high-contrast dark-mode interface with subtle neon glow accents, smooth page transitions, and interactive visual aesthetics.
 
 ---
 
-## 🛠️ Kullanılan Teknolojiler / Technologies Used
+## 🌐 Live Demo
 
-* **Framework**: Next.js 16 (App Router) & React 19
-* **Language**: TypeScript 5 (Strict Type Checking)
-* **Styling**: Tailwind CSS & Vanilla CSS (with CSS variables)
-* **Icons**: Lucide React
-* **Animations**: OGL & Tw-Animate-CSS
-* **Database Engine**: Concurrency-locked file-based JSON database (located in `data/db/` or `/tmp/shopwave_db/` when deployed on serverless platforms)
+- **Production URL**: [https://shopwave-iota.vercel.app/](https://shopwave-iota.vercel.app/)
+
 
 ---
 
-## ⚙️ Kurulum Adımları / Setup & Installation
+## 🛠️ Technology Stack
 
-### 1. Projeyi Klonlayın ve Klasöre Geçin / Clone the Project
-```bash
-cd shopwave
-```
+| Layer | Technology |
+| :--- | :--- |
+| **Framework** | Next.js 16 (App Router) & React 19 |
+| **Language** | TypeScript 5 (Strict Mode) |
+| **Styling** | Tailwind CSS & Custom CSS Variables |
+| **Icons** | Lucide React |
+| **Database** | Ephemeral/Local Concurrency-locked JSON Database |
+| **Sessions** | Cryptographically signed HMAC-SHA256 Cookies |
 
-### 2. Bağımlılıkları Yükleyin / Install Dependencies
-```bash
-npm install
-```
+---
 
-### 3. Geliştirme Sunucusunu Çalıştırın / Run Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) with your browser.
+## ✨ Features
 
-### 4. Üretim Derlemesini Çalıştırın / Production Build Validation
-```bash
-npm run build
-```
-
-### 5. ESLint ve Tip Kontrollerini Çalıştırın / ESLint & Type Checks
-```bash
-npm run lint
-```
+* **User Authentication**: Secure sign-up, sign-in, and sign-out pages. Passwords are encrypted using SHA-512 PBKDF2 hashing.
+* **Cryptographic Sessions**: Stateful cookie management matching sessions with HMAC signatures using Web Crypto APIs (compatible with Next.js Edge Runtime).
+* **Protected Routes**: central middleware intercepts `/cart`, `/checkout`, `/orders`, and `/profile`, automatically redirecting guests to login with target page restoration.
+* **Interactive Shopping Cart**: Client-hydrated, globally-managed React Context cart with persistent sync to `localStorage` and real-time total calculations.
+* **Catalog Sorting & Filters**: Advanced product filtering by Category, Stock Status, Sale status, and Brand. Sort by price, release dates, and reviews.
+* **Simulated Checkout & Payment**: Credit card visual formatting, validation checks, inventory stock depletion, and database order logging.
+* **Invoice Tracking**: Detailed historic orders list under `/orders/[id]`, preserving the historical price at the exact moment of purchase.
+* **Customer Reviews**: Dynamic product rating cards and submission forms for authenticated customers.
 
 ---
 
 ## 📊 Database Schema & Relationships
 
-ShopWave implements a relational data structure written directly to JSON files inside `data/db/` with strict constraint validation:
+ShopWave utilizes a relational database mapped directly to JSON table sheets under `/data/db/` (which dynamically ports to the writeable `/tmp` directory when deployed on serverless cloud platforms):
 
-- **`categories` (1 ── N) `products`**: Categories have multiple products; products hold a category foreign key.
-- **`users` (1 ── N) `orders`**: A user has multiple order records. Orders validate that the `user_id` points to an existing user.
-- **`orders` (1 ── N) `order_items`**: An order contains multiple items. Each item maps to a product.
-- **`products` (1 ── N) `order_items`**: A product can appear across multiple order details.
-- **`order_items`**: Stored separately with a dedicated `unit_price` field, freezing the purchase price against future catalog adjustments.
-- **`reviews`**: Stored in a dedicated table referencing both `product_id` and `user_id` foreign keys.
+| Table | Relation | Description |
+| :--- | :--- | :--- |
+| **`categories`** | `1 ── N` products | Holds product categories and navigation links. |
+| **`products`** | `1 ── N` order_items | Holds name, brand, description, tags, pricing, stock count, and badges. |
+| **`users`** | `1 ── N` orders | Holds registered names, emails, and PBKDF2 password hashes. |
+| **`orders`** | `1 ── N` order_items | Holds shipping details, date, status, total cost, and user foreign key. |
+| **`order_items`** | Reference table | Holds individual item line records, capturing a snapshot of `unit_price`. |
+| **`reviews`** | Reference table | Holds product ratings, user IDs, and review comments. |
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1. Clone & Navigate
+```bash
+git clone <repository-url>
+cd shopwave
+```
+
+### 2. Install Dependencies
+```bash
+npm install
+```
+
+### 3. Run Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the application.
+
+### 4. Build for Production
+```bash
+npm run build
+```
+
+### 5. Run Lint & Code Checks
+```bash
+npm run lint
+```
